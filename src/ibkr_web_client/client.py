@@ -218,31 +218,3 @@ class IBKRHttpClient:
             self.__logger.debug(f"Response content: {response.content}")
         else:
             self.__logger.error(f"Request failed: {response.status_code}, content: {response.content}")
-
-
-if __name__ == "__main__":
-    from pathlib import Path
-    import os
-
-    c = IBKRConfig(
-        os.getenv("API_IBKR_TOKEN"),
-        os.getenv("API_IBKR_SECRET"),
-        os.getenv("API_IBKR_CONSUMER_KEY"),
-        Path(os.getenv("API_IBKR_DH_PARAM")),
-        Path(os.getenv("API_IBKR_DH_PRIVATE_ENCRYPTION")),
-        Path(os.getenv("API_IBKR_DH_PRIVATE_SIGNATURE")),
-    )
-    logging.basicConfig(
-        level=logging.DEBUG,  # Log everything, even debug messages
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.FileHandler("api_client.log"),  # Log to a file
-            logging.StreamHandler(),  # Log to the console
-        ],
-    )
-    http_client = IBKRHttpClient(c)
-    # print(http_client.portfolio_accounts())
-    account = "U13002296"
-    # print(http_client.get_all_positions(account, SortingOrder.ASCENDING))
-    # print(http_client.get_positions(account, 0))
-    print(http_client.get_portfolio_summary(account))
