@@ -9,9 +9,10 @@ setup(
         "requests",
         "PyCryptodome",
         "urllib3",
-        "cryptography"
+        "cryptography",
+        "pytest"
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     author="Nikita Sirons",
     author_email="nikita.sirons@gmail.com",
     description="A Python client for the Interactive Brokers API",
