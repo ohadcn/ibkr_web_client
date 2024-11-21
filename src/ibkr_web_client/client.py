@@ -109,7 +109,7 @@ class IBKRHttpClient:
         endpoint = "/portfolio/allocation"
         json_content = {"acctIds": account_ids}
 
-        return self.__get(endpoint, json_content=json_content)
+        return self.__post(endpoint, json_content=json_content)
 
     def get_positions(self, account_id: str, page_id: int = 0):
         """
@@ -160,7 +160,7 @@ class IBKRHttpClient:
 
         return self.__get(endpoint)
 
-    def get_positions_by_contract_id(self, contract_id: str):
+    def get_position_info_by_contract_id(self, contract_id: str):
         """
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#position-contract-info
         """

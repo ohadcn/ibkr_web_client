@@ -37,6 +37,44 @@ METADATA_ACCOUNT_KEY_TYPE_MAP = {
     "pageNum": [int],
 }
 
+LONG_SHORT_KEY_TYPE_MAP = {
+    "long": [dict],
+    "short": [dict],
+}
+
+LEDGER_KEY_TYPE_MAP = {
+    "commoditymarketvalue": [float, int],
+    "futuremarketvalue": [float, int],
+    "settledcash": [float, int],
+    "exchangerate": [float, int],
+    "sessionid": [int],
+    "cashbalance": [float, int],
+    "corporatebondsmarketvalue": [float, int],
+    "warrantsmarketvalue": [float, int],
+    "netliquidationvalue": [float, int],
+    "interest": [float, int],
+    "unrealizedpnl": [float, int],
+    "stockmarketvalue": [float, int],
+    "moneyfunds": [float, int],
+    "currency": [str],
+    "realizedpnl": [float, int],
+    "funds": [float, int],
+    "acctcode": [str],
+    "issueroptionsmarketvalue": [float, int],
+    "key": [str],
+    "timestamp": [int],
+    "severity": [int],
+    "stockoptionmarketvalue": [float, int],
+    "futuresonlypnl": [float, int],
+    "tbondsmarketvalue": [float, int],
+    "futureoptionmarketvalue": [float, int],
+    "cashbalancefxsegment": [float, int],
+    "secondkey": [str],
+    "tbillsmarketvalue": [float, int],
+    "endofbundle": [int],
+    "dividends": [float, int],
+}
+
 
 @pytest.fixture(scope="session")
 def client() -> IBKRHttpClient:
@@ -56,9 +94,29 @@ def account_id(client: IBKRHttpClient) -> str:
     return client.portfolio_subaccounts()[0]["id"]
 
 
-def assert_response_obj(response_obj: dict, key_type_map: dict):
+def assert_response_obj(response_obj: dict, key_type_map: dict, debug: bool = False):
+    if debug:
+        print("RESPONSE OBJECT: ", response_obj)
+        for key in key_type_map.keys():
+            if key not in response_obj:
+                print(f"(!!!) {key} not in response_obj")
+
+        for key, check_type_lst in key_type_map.items():
+            any_type_check = False
+            for check_type in check_type_lst:
+                if isinstance(response_obj[key], check_type):
+                    any_type_check = True
+                    break
+            if not any_type_check:
+                print(f"(!!!) {key} wrong type, should be {check_type_lst} but is {type(response_obj[key])}")
+
     assert all(key in response_obj for key in key_type_map.keys())
     assert all(
         any(isinstance(response_obj[key], check_type) for check_type in check_type_lst)
         for key, check_type_lst in key_type_map.items()
     )
+
+
+@pytest.fixture(scope="session")
+def base_currency(client: IBKRHttpClient, account_id: str) -> str:
+    return client.portfolio_account_metadata(account_id)["currency"]
