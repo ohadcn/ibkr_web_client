@@ -117,6 +117,7 @@ class AlertCondition:
         self.value = condition.value
         self.timezone = condition.timezone
 
+    @property
     def __dict__(self):
         d = {
             "conidex": self.conidex,
@@ -157,6 +158,7 @@ class Alert:
         self.show_popup = int(show_popup)
         self.conditions = conditions
 
+    @property
     def __dict__(self):
         return {
             "alertMessage": self.alert_message,
@@ -169,5 +171,5 @@ class Alert:
             "iTWSOrdersOnly": self.iTWS_orders_only,
             "showPopup": self.show_popup,
             "tif": self.tif,
-            "conditions": [condition.__dict__() for condition in self.conditions],
+            "conditions": [condition.__dict__ for condition in self.conditions],
         }

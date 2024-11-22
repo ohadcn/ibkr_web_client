@@ -44,6 +44,8 @@ client.portfolio_accounts()
 ### TODO notes
  - [x] Authentication
  - [ ] Alerts
+   - [ ] Not all Alert conditions are implemented
+   - [ ] Get MTA Alert is not done
  - [ ] Accounts
  - [ ] Contract
  - [ ] FA Allocation Management

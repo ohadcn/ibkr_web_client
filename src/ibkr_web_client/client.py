@@ -195,16 +195,22 @@ class IBKRHttpClient:
 
         return self.__post(endpoint, json_content)
 
-    def create_alert(
-        self,
-        account_id: str,
-        alert: Alert,
-    ):
+    def create_alert(self, account_id: str, alert: Alert):
         """
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#create-alert
         """
         endpoint = f"/iserver/account/{account_id}/alert"
-        json_content = alert.__dict__()
+        json_content = alert.__dict__
+
+        return self.__post(endpoint, json_content=json_content)
+
+    def modify_alert(self, account_id: str, alert_id: int, alert: Alert):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#create-alert
+        """
+        endpoint = f"/iserver/account/{account_id}/alert"
+        json_content = alert.__dict__
+        json_content["order_id"] = alert_id
 
         return self.__post(endpoint, json_content=json_content)
 
@@ -223,6 +229,33 @@ class IBKRHttpClient:
         endpoint = f"/iserver/account/{account_id}/alert/{alert_id}"
 
         return self.__delete(endpoint)
+
+    def delete_all_alerts(self, account_id: str):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#delete-alert
+        """
+        alert_id = 0
+        endpoint = f"/iserver/account/{account_id}/alert/{alert_id}"
+
+        return self.__delete(endpoint)
+
+    def set_alert_activation(self, account_id: str, alert_id: int, active_active: bool):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#activate-alert
+        """
+        endpoint = f"/iserver/account/{account_id}/alert/activate"
+        json_content = {"alertId": alert_id, "alertActive": int(active_active)}
+
+        return self.__post(endpoint, json_content=json_content)
+
+    def get_alert_details(self, alert_id: int):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#get-alert
+        """
+        endpoint = f"/iserver/account/alert/{alert_id}"
+        params = {"type": "Q"}
+
+        return self.__get(endpoint, params=params)
 
     def __get(self, endpoint: str, json_content: dict = {}, params: dict = {}) -> dict:
         method = "GET"
