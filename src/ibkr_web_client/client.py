@@ -7,7 +7,7 @@ from typing import List
 from .config import IBKRConfig
 from .auth import IBKRAuthenticator
 
-from .ibkr_types import SortingOrder, Period
+from .ibkr_types import SortingOrder, Period, Alert
 
 
 class IBKRHttpClient:
@@ -38,7 +38,14 @@ class IBKRHttpClient:
         adapter = HTTPAdapter(max_retries=retries)
         self.session.mount("https://", adapter)
 
+        # Initialize brokerage session to get access to trading and market data (/iserver/* endpoints)
+        self.init_brokerage_session()
+
     def init_brokerage_session(self):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#ssodh-init
+        NOTE: This is essential for using all /iserver endpoints, including access to trading and market data,
+        """
         endpoint = "/iserver/auth/ssodh/init"
         json_content = {"publish": True, "compete": True}
 
@@ -188,6 +195,35 @@ class IBKRHttpClient:
 
         return self.__post(endpoint, json_content)
 
+    def create_alert(
+        self,
+        account_id: str,
+        alert: Alert,
+    ):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#create-alert
+        """
+        endpoint = f"/iserver/account/{account_id}/alert"
+        json_content = alert.__dict__()
+
+        return self.__post(endpoint, json_content=json_content)
+
+    def get_alert_list(self, account_id: str):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#get-alert-list
+        """
+        endpoint = f"/iserver/account/{account_id}/alerts"
+
+        return self.__get(endpoint)
+
+    def delete_alert(self, account_id: str, alert_id: str):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#delete-alert
+        """
+        endpoint = f"/iserver/account/{account_id}/alert/{alert_id}"
+
+        return self.__delete(endpoint)
+
     def __get(self, endpoint: str, json_content: dict = {}, params: dict = {}) -> dict:
         method = "GET"
         url = f"{self.__config.base_url}/{endpoint.lstrip('/')}"
@@ -200,14 +236,26 @@ class IBKRHttpClient:
         self._log_response(response)
         return json.loads(response.content.decode("utf-8"))
 
-    def __post(self, endpoint: str, json_content: dict = {}) -> dict:
+    def __post(self, endpoint: str, json_content: dict = {}, params: dict = {}) -> dict:
         method = "POST"
         url = f"{self.__config.base_url}/{endpoint.lstrip('/')}"
 
         headers = self.__authenticator.get_headers(method, url)
         self.session.headers.update(headers)
 
-        response = self.session.post(url=url, json=json_content)
+        response = self.session.post(url=url, json=json_content, params=params)
+
+        self._log_response(response)
+        return json.loads(response.content.decode("utf-8"))
+
+    def __delete(self, endpoint: str, json_content: dict = {}, params: dict = {}):
+        method = "DELETE"
+        url = f"{self.__config.base_url}/{endpoint.lstrip('/')}"
+
+        headers = self.__authenticator.get_headers(method, url)
+        self.session.headers.update(headers)
+
+        response = self.session.delete(url=url, json=json_content, params=params)
 
         self._log_response(response)
         return json.loads(response.content.decode("utf-8"))

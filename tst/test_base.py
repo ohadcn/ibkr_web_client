@@ -1,8 +1,9 @@
 import os
 from pathlib import Path
 import pytest
-
+from datetime import datetime
 from ibkr_web_client import IBKRConfig, IBKRHttpClient
+from ibkr_web_client.ibkr_types import Alert, GTDAlert, GTCAlert, AlertCondition, PriceCondition, LogicBind, Operator
 
 ACCOUNT_KEY_TYPE_MAP = {
     "id": [str],
@@ -120,3 +121,25 @@ def assert_response_obj(response_obj: dict, key_type_map: dict, debug: bool = Fa
 @pytest.fixture(scope="session")
 def base_currency(client: IBKRHttpClient, account_id: str) -> str:
     return client.portfolio_account_metadata(account_id)["currency"]
+
+
+@pytest.fixture(scope="session")
+def alert() -> Alert:
+    condition = AlertCondition(
+        contract_id=265598,
+        exchange="SMART",
+        logic_bind=LogicBind.END,
+        operator=Operator.GREATER_THAN,
+        condition=PriceCondition(500),
+    )
+    return Alert(
+        alert_name="test_alert",
+        alert_message="test_alert",
+        alert_repeatable=False,
+        outside_rth=False,
+        send_message=False,
+        email="test@test.com",
+        # tif_alert=GTDAlert(expireTime=datetime(year=2027, month=1, day=1, hour=12, minute=0, second=0)),
+        tif_alert=GTCAlert(),
+        conditions=[condition],
+    )

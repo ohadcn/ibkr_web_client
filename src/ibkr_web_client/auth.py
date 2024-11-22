@@ -23,17 +23,17 @@ class IBKRAuthenticator:
         return self.__generate_standard_headers(method, url)
 
     def __update_live_session_token(self):
-        fetchLst = False
+        fetch_lst = False
         if self.__live_session_token is None:
             self.__logger.info("Live session token is not set, fetching new one")
-            fetchLst = True
+            fetch_lst = True
         elif (
             self.__live_session_token_expiration
             < datetime.datetime.now().timestamp() + self.__config.update_session_interval
         ):
             self.__logger.info("Live session token is expired, fetching new one")
-            fetchLst = True
-        if fetchLst:
+            fetch_lst = True
+        if fetch_lst:
             self.__logger.info("Fetching new live session token")
             self.__live_session_token, self.__live_session_token_expiration = self.__fetch_live_session_token()
             self.__logger.info(
@@ -82,7 +82,7 @@ class IBKRAuthenticator:
         headers["Host"] = "api.ibkr.com"
         headers["Accept"] = "*/*"
         headers["Accept-Encoding"] = "gzip,deflate"
-        headers["Connection"] = "Keep-Alive"
+        headers["Connection"] = "keep-alive"
 
     def __fetch_live_session_token(self):
         self.__logger.info("Starting fetching live session token")
