@@ -57,8 +57,9 @@ client.portfolio_accounts()
  - [x] Portfolio
  - [x] Portfolio Analyst
  - [ ] Scanner
+   - [ ] HMDS Scanner is not working
  - [ ] Session
- - [ ] Watchlists
+ - [x] Watchlists
 
 ### Tests
 To run tests you need to have your own Paper Trading account.

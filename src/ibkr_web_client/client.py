@@ -297,6 +297,38 @@ class IBKRHttpClient:
 
         return self.__delete(endpoint, params=params)
 
+    def get_iserver_scanner_params(self):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#iserver-scanner-parameters
+        """
+        endpoint = "/iserver/scanner/params"
+
+        return self.__get(endpoint)
+    
+    def iserver_market_scanner(self, instrument: str, location: str, scan_type: str, filter_lst: List[dict]):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#iserver-market-scanner
+        """
+        endpoint = "/iserver/scanner/run"
+        json_content = {
+            "instrument": instrument,
+            "location": location,
+            "type": scan_type,
+            "filter": filter_lst
+        }
+
+        return self.__post(endpoint, json_content=json_content)
+    
+    def get_hmds_scanner_params(self):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#hmds-scanner-parameters
+        I think it is still not working: https://www.reddit.com/r/IBKR_Official/comments/1e86w89/cant_access_hmdsscannerparams_via_cpapi/
+        """
+        endpoint = "/hmds/scanner/params"
+
+        return self.__get(endpoint)
+
+
     def __get(self, endpoint: str, json_content: dict = {}, params: dict = {}) -> dict:
         method = "GET"
         url = f"{self.__config.base_url}/{endpoint.lstrip('/')}"
