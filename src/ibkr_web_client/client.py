@@ -257,6 +257,46 @@ class IBKRHttpClient:
 
         return self.__get(endpoint, params=params)
 
+    def create_watchlist(self, watchlist_id: str, watchlist_name: str, contract_id_lst: List[int]):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#create-watchlist
+        """
+        endpoint = f"/iserver/watchlist"
+        json_content = {
+            "id": watchlist_id,
+            "name": watchlist_name,
+            "rows": [{"C": contract_id} for contract_id in contract_id_lst],
+        }
+
+        return self.__post(endpoint, json_content=json_content)
+
+    def get_all_watchlists(self):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#all-watchlists
+        """
+        endpoint = f"/iserver/watchlists"
+        params = {"SC": "USER_WATCHLIST"}
+
+        return self.__get(endpoint, params=params)
+
+    def get_watchlist_info(self, watchlist_id: str):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#watchlist-info
+        """
+        endpoint = f"/iserver/watchlist"
+        params = {"id": watchlist_id}
+
+        return self.__get(endpoint, params=params)
+
+    def delete_watchlist(self, watchlist_id: str):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#delete-watchlist
+        """
+        endpoint = f"/iserver/watchlist"
+        params = {"id": watchlist_id}
+
+        return self.__delete(endpoint, params=params)
+
     def __get(self, endpoint: str, json_content: dict = {}, params: dict = {}) -> dict:
         method = "GET"
         url = f"{self.__config.base_url}/{endpoint.lstrip('/')}"
@@ -264,6 +304,7 @@ class IBKRHttpClient:
         headers = self.__authenticator.get_headers(method, url)
         self.session.headers.update(headers)
 
+        self.__logger.debug(f"{method} request to {url} with params: {params} and json_content: {json_content}")
         response = self.session.get(url=url, json=json_content, params=params)
 
         self._log_response(response)
@@ -276,6 +317,7 @@ class IBKRHttpClient:
         headers = self.__authenticator.get_headers(method, url)
         self.session.headers.update(headers)
 
+        self.__logger.debug(f"{method} request to {url} with params: {params} and json_content: {json_content}")
         response = self.session.post(url=url, json=json_content, params=params)
 
         self._log_response(response)
@@ -288,6 +330,7 @@ class IBKRHttpClient:
         headers = self.__authenticator.get_headers(method, url)
         self.session.headers.update(headers)
 
+        self.__logger.debug(f"{method} request to {url} with params: {params} and json_content: {json_content}")
         response = self.session.delete(url=url, json=json_content, params=params)
 
         self._log_response(response)

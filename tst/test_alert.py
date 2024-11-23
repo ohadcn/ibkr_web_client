@@ -1,10 +1,8 @@
 import pytest
-from copy import deepcopy
 
 from tst.test_base import client, account_id
-from ibkr_web_client.ibkr_types import Alert
 from ibkr_web_client.client import IBKRHttpClient
-from ibkr_web_client.ibkr_types import Alert, GTDAlert, GTCAlert, AlertCondition, PriceCondition, LogicBind, Operator
+from ibkr_web_client.ibkr_types import Alert, GTCAlert, AlertCondition, PriceCondition, LogicBind, Operator
 
 
 @pytest.fixture(scope="module")
@@ -102,7 +100,7 @@ def test_04_activate_alert(client: IBKRHttpClient, account_id: str, alert_obj):
 def test_05_get_alert_details(client: IBKRHttpClient, alert_obj):
     _alert, alert_id = alert_obj
     response = client.get_alert_details(alert_id)
-    
+
     assert response["order_id"] == alert_id
     assert response["alert_active"] == 1
 
