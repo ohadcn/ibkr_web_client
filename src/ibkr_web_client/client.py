@@ -304,21 +304,16 @@ class IBKRHttpClient:
         endpoint = "/iserver/scanner/params"
 
         return self.__get(endpoint)
-    
+
     def iserver_market_scanner(self, instrument: str, location: str, scan_type: str, filter_lst: List[dict]):
         """
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#iserver-market-scanner
         """
         endpoint = "/iserver/scanner/run"
-        json_content = {
-            "instrument": instrument,
-            "location": location,
-            "type": scan_type,
-            "filter": filter_lst
-        }
+        json_content = {"instrument": instrument, "location": location, "type": scan_type, "filter": filter_lst}
 
         return self.__post(endpoint, json_content=json_content)
-    
+
     def get_hmds_scanner_params(self):
         """
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#hmds-scanner-parameters
@@ -328,6 +323,32 @@ class IBKRHttpClient:
 
         return self.__get(endpoint)
 
+    def get_security_definition(self, contract_id_lst: List[int]):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#trsrv-conid-contract
+        """
+        endpoint = f"/trsrv/secdef"
+        params = {"conids": ",".join(map(str, contract_id_lst))}
+
+        return self.__get(endpoint, params=params)
+
+    def get_futures_by_symbol(self, future_symbol_lst: List[str]):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#trsrv-future-contract
+        """
+        endpoint = f"/trsrv/futures"
+        params = {"symbols": ",".join(future_symbol_lst)}
+
+        return self.__get(endpoint, params=params)
+
+    def get_stocks_by_symbol(self, stock_symbol_lst: List[str]):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#trsrv-stock-contract
+        """
+        endpoint = f"/trsrv/stocks"
+        params = {"symbols": ",".join(stock_symbol_lst)}
+
+        return self.__get(endpoint, params=params)
 
     def __get(self, endpoint: str, json_content: dict = {}, params: dict = {}) -> dict:
         method = "GET"
