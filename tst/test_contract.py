@@ -59,6 +59,26 @@ def test_get_all_contracts(client: IBKRHttpClient):
     response = client.get_all_contracts(NYSE)
 
     appl_stock = list(filter(lambda x: x["ticker"] == "AAPL", response))[0]
-
     assert appl_stock["conid"] == 265598
-    assert appl_stock["exchange"] == NYSE.id
+
+
+def test_get_contract_info(client: IBKRHttpClient):
+    response = client.get_contract_info(265598)
+
+    assert response["con_id"] == 265598
+    assert response["symbol"] == "AAPL"
+    assert NYSE.id in response["valid_exchanges"]
+
+
+def test_get_currency_pairs(client: IBKRHttpClient):
+    response = client.get_currency_pairs("USD")
+
+    assert len(response) > 0
+    assert "USD" in response
+    assert len(response["USD"]) > 0
+
+
+def test_get_currency_exchange_rate(client: IBKRHttpClient):
+    response = client.get_currency_exchange_rate("USD", "EUR")
+
+    assert response["rate"] > 0

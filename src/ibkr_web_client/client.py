@@ -340,6 +340,32 @@ class IBKRHttpClient:
         params = {"exchange": exchange.id}
 
         return self.__get(endpoint, params=params)
+    
+    def get_contract_info(self, contract_id: int): 
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#info-conid-contract
+        """
+        endpoint = f"/iserver/contract/{contract_id}/info"
+
+        return self.__get(endpoint)
+
+    def get_currency_pairs(self, currency: str):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#get-currency-pairs
+        """
+        endpoint = f"/iserver/currency/pairs"
+        params = {"currency": currency}
+
+        return self.__get(endpoint, params=params)
+    
+    def get_currency_exchange_rate(self, base_currency: str, quote_currency: str):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#get-exchange-rate
+        """
+        endpoint = f"/iserver/exchangerate"
+        params = {"target": quote_currency, "source": base_currency}
+
+        return self.__get(endpoint, params=params)
 
     def get_futures_by_symbol(self, future_symbol_lst: List[str]):
         """
