@@ -2,6 +2,7 @@
 
 from .enums import SortingOrder, Period
 from .alert import PriceCondition, MarginCondition, TradeCondition, AlertCondition, Alert, GTCAlert, GTDAlert, LogicBind, Operator
+from .exchange import *
 
 __all__ = [
     "SortingOrder",
@@ -15,4 +16,5 @@ __all__ = [
     "GTDAlert",
     "LogicBind",
     "Operator",
+    "Exchange",
 ]

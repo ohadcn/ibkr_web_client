@@ -2,6 +2,7 @@ import pytest
 
 from tst.test_base import client, account_id
 from ibkr_web_client.client import IBKRHttpClient
+from ibkr_web_client.ibkr_types.exchange import NYSE
 
 
 def test_get_futures_by_symbol(client: IBKRHttpClient):
@@ -52,3 +53,12 @@ def test_get_security_definition(client: IBKRHttpClient):
     assert response["secdef"][0]["ticker"] == "AAPL"
     assert response["secdef"][1]["conid"] == 272093
     assert response["secdef"][1]["ticker"] == "MSFT"
+
+
+def test_get_all_contracts(client: IBKRHttpClient):
+    response = client.get_all_contracts(NYSE)
+
+    appl_stock = list(filter(lambda x: x["ticker"] == "AAPL", response))[0]
+
+    assert appl_stock["conid"] == 265598
+    assert appl_stock["exchange"] == NYSE.id

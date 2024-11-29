@@ -7,7 +7,7 @@ from typing import List
 from .config import IBKRConfig
 from .auth import IBKRAuthenticator
 
-from .ibkr_types import SortingOrder, Period, Alert
+from .ibkr_types import SortingOrder, Period, Alert, Exchange
 
 
 class IBKRHttpClient:
@@ -329,6 +329,15 @@ class IBKRHttpClient:
         """
         endpoint = f"/trsrv/secdef"
         params = {"conids": ",".join(map(str, contract_id_lst))}
+
+        return self.__get(endpoint, params=params)
+
+    def get_all_contracts(self, exchange: Exchange):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#exchange-conids
+        """
+        endpoint = f"/trsrv/all-conids"
+        params = {"exchange": exchange.id}
 
         return self.__get(endpoint, params=params)
 
