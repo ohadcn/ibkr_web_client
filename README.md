@@ -71,6 +71,11 @@ client.portfolio_accounts()
  - [ ] FA Allocation Management
  - [ ] FYIs and Notifications
  - [ ] Market Data
+   - [x] Live Market Data Snapshot
+   - [ ] Regulatory Snapshot 
+   - [ ] Historical Market Data
+   - [ ] Unsubscribe (Single)
+   - [ ] Unsubscribe (All)
  - [ ] Option Chains
  - [ ] Order Monitoring
  - [ ] Orders

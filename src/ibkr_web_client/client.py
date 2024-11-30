@@ -7,7 +7,7 @@ from typing import List
 from .config import IBKRConfig
 from .auth import IBKRAuthenticator
 
-from .ibkr_types import SortingOrder, Period, Alert, Exchange, OrderRule, BaseCurrency
+from .ibkr_types import SortingOrder, Period, Alert, Exchange, OrderRule, BaseCurrency, MarketDataField
 
 
 class IBKRHttpClient:
@@ -40,6 +40,8 @@ class IBKRHttpClient:
 
         # Initialize brokerage session to get access to trading and market data (/iserver/* endpoints)
         self.init_brokerage_session()
+        # The endpoint /iserver/accounts must be called prior to /iserver/marketdata/snapshot
+        self.get_brokerage_accounts()
 
     def init_brokerage_session(self):
         """
@@ -58,6 +60,14 @@ class IBKRHttpClient:
         endpoint = "/logout"
 
         return self.__post(endpoint)
+    
+    def get_brokerage_accounts(self):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#get-brokerage-accounts
+        """
+        endpoint = "/iserver/accounts"
+
+        return self.__get(endpoint)
 
     def portfolio_accounts(self):
         """
@@ -393,6 +403,16 @@ class IBKRHttpClient:
         params = {"symbols": ",".join(stock_symbol_lst)}
 
         return self.__get(endpoint, params=params)
+    
+    def get_live_market_data_snapshot(self, contract_id_lst: List[int], field_lst: List[MarketDataField]):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#md-snapshot
+        """
+        endpoint = "/iserver/marketdata/snapshot"
+        params = {"conids": ",".join(map(str, contract_id_lst)), "fields": ",".join(map(lambda x: str(x.value), field_lst))}
+
+        return self.__get(endpoint, params=params)
+        
 
     def __get(self, endpoint: str, json_content: dict = {}, params: dict = {}) -> dict:
         method = "GET"

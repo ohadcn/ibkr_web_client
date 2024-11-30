@@ -2,6 +2,9 @@ from enum import Enum
 
 
 class BaseCurrency(Enum):
+    """
+    Source: https://www.interactivebrokers.com/campus/glossary-terms/base-currency/
+    """
     AUD = "AUD",
     CAD = "CAD",
     CHF = "CHF",
