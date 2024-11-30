@@ -22,3 +22,8 @@ class Period(Enum):
 class IBKRRealms(Enum):
     TEST = "test_realm"
     LIMITED_POA = "limited_poa"
+
+class OrderRule(Enum):
+    """Order rule for contract info and rules requests."""
+    BUY = "buy"
+    SELL = "sell"

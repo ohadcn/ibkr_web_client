@@ -7,7 +7,7 @@ from typing import List
 from .config import IBKRConfig
 from .auth import IBKRAuthenticator
 
-from .ibkr_types import SortingOrder, Period, Alert, Exchange
+from .ibkr_types import SortingOrder, Period, Alert, Exchange, OrderRule
 
 
 class IBKRHttpClient:
@@ -191,7 +191,7 @@ class IBKRHttpClient:
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#pa-account-transactions
         """
         endpoint = f"/pa/transactions"
-        json_content = {"acctIds": account_ids, "conids": contract_ids, "currency": currency, "days": str(days)}
+        json_content = {"acctIds": account_ids, "conids": contract_ids, "currency": currency, "days": days}
 
         return self.__post(endpoint, json_content)
 
@@ -340,14 +340,23 @@ class IBKRHttpClient:
         params = {"exchange": exchange.id}
 
         return self.__get(endpoint, params=params)
-    
-    def get_contract_info(self, contract_id: int): 
+
+    def get_contract_info(self, contract_id: int):
         """
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#info-conid-contract
         """
         endpoint = f"/iserver/contract/{contract_id}/info"
 
         return self.__get(endpoint)
+
+    def get_contract_info_and_rules(self, contract_id: int, order_rule: OrderRule):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#info-rules-contract
+        """
+        endpoint = f"/iserver/contract/{contract_id}/info-and-rules"
+        params = {"isBuy": order_rule == OrderRule.BUY}
+
+        return self.__get(endpoint, params=params)
 
     def get_currency_pairs(self, currency: str):
         """
@@ -357,7 +366,7 @@ class IBKRHttpClient:
         params = {"currency": currency}
 
         return self.__get(endpoint, params=params)
-    
+
     def get_currency_exchange_rate(self, base_currency: str, quote_currency: str):
         """
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#get-exchange-rate

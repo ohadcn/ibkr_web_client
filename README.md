@@ -44,10 +44,30 @@ client.portfolio_accounts()
 ### TODO notes
  - [x] Authentication
  - [ ] Alerts
-   - [ ] Not all Alert conditions are implemented
-   - [ ] Get MTA Alert is not done
+   - [x] Create or Modify Alert
+    - For now only Price, Margin and Trade conditions are added
+   - [x] Get a list of available alerts
+   - [x] Get details of a specific alert
+   - [ ] Get MTA Alert
+   - [x] Activate or deactivate an alert
+   - [x] Delete an alert
  - [ ] Accounts
  - [ ] Contract
+   - [x] Search the security definition by Contract ID
+   - [x] All Conids by Exchange
+   - [x] Contract information by Contract ID
+   - [x] Currency pairs
+   - [x] Currency Exchange Rate
+   - [x] Find all Info and rules for a given contract
+   - [ ] Search Algo Params by Contract ID
+   - [ ] Search Bond Filter Information
+   - [ ] Search Contract by Symbol
+   - [ ] Search Contract Rules
+   - [ ] Search SecDef information by conid
+   - [ ] Search Strikes by Underlying Contract ID
+   - [x] Search Future by Symbol
+   - [x] Search Stocks by Symbol
+   - [ ] Trading Schedule by Symbol
  - [ ] FA Allocation Management
  - [ ] FYIs and Notifications
  - [ ] Market Data
@@ -55,11 +75,33 @@ client.portfolio_accounts()
  - [ ] Order Monitoring
  - [ ] Orders
  - [x] Portfolio
+   - [x] Portfolio Accounts
+   - [x] Portfolio Subaccounts
+   - [x] Portfolio Subaccounts (Large Account Structures)
+   - [x] Specific Account's Portfolio Information
+   - [x] Portfolio Allocation (Single)
+   - [x] Combination Positions
+   - [x] Portfolio Allocation (All)
+   - [x] Positions
+   - [x] Positions by Conid
+   - [x] Invalidate Backend Portfolio Cache
+   - [x] Portfolio Summary
+   - [x] Portfolio Ledger
+   - [x] Position & Contract Info
  - [x] Portfolio Analyst
+   - [x] Account Performance
+   - [x] Transaction History
  - [ ] Scanner
-   - [ ] HMDS Scanner is not working
+   - [x] Iserver Scanner Parameters
+   - [x] Iserver Market Scanner
+   - [ ] HMDS Scanner Parameters (Not working)
+   - [ ] HMDS Market Scanner (Not working)
  - [ ] Session
  - [x] Watchlists
+   - [x] Create a Watchlist
+   - [x] Get All Watchlists
+   - [x] Get Watchlist Information
+   - [x] Delete a Watchlist
 
 ### Tests
 To run tests you need to have your own Paper Trading account.

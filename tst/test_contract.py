@@ -2,6 +2,7 @@ import pytest
 
 from tst.test_base import client, account_id
 from ibkr_web_client.client import IBKRHttpClient
+from ibkr_web_client.ibkr_types import OrderRule
 from ibkr_web_client.ibkr_types.exchange import NYSE
 
 
@@ -82,3 +83,17 @@ def test_get_currency_exchange_rate(client: IBKRHttpClient):
     response = client.get_currency_exchange_rate("USD", "EUR")
 
     assert response["rate"] > 0
+
+
+def test_get_contract_info_and_rules_buy(client: IBKRHttpClient):
+    response = client.get_contract_info_and_rules(265598, OrderRule.BUY)
+
+    assert response["symbol"] == "AAPL"
+    assert response["con_id"] == 265598
+
+
+def test_get_contract_info_and_rules_sell(client: IBKRHttpClient):
+    response = client.get_contract_info_and_rules(265598, OrderRule.SELL)
+
+    assert response["symbol"] == "AAPL"
+    assert response["con_id"] == 265598
