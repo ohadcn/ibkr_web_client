@@ -7,7 +7,7 @@ from typing import List
 from .config import IBKRConfig
 from .auth import IBKRAuthenticator
 
-from .ibkr_types import SortingOrder, Period, Alert, Exchange, OrderRule
+from .ibkr_types import SortingOrder, Period, Alert, Exchange, OrderRule, BaseCurrency
 
 
 class IBKRHttpClient:
@@ -185,13 +185,13 @@ class IBKRHttpClient:
         return self.__post(endpoint, json_content)
 
     def get_accounts_transactions(
-        self, account_ids: List[str], contract_ids: List[int], currency: str = "USD", days: int = 90
+        self, account_ids: List[str], contract_ids: List[int], currency: BaseCurrency = BaseCurrency.USD, days: int = 90
     ):
         """
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#pa-account-transactions
         """
         endpoint = f"/pa/transactions"
-        json_content = {"acctIds": account_ids, "conids": contract_ids, "currency": currency, "days": days}
+        json_content = {"acctIds": account_ids, "conids": contract_ids, "currency": currency.value, "days": days}
 
         return self.__post(endpoint, json_content)
 
@@ -358,21 +358,21 @@ class IBKRHttpClient:
 
         return self.__get(endpoint, params=params)
 
-    def get_currency_pairs(self, currency: str):
+    def get_currency_pairs(self, currency: BaseCurrency):
         """
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#get-currency-pairs
         """
         endpoint = f"/iserver/currency/pairs"
-        params = {"currency": currency}
+        params = {"currency": currency.value}
 
         return self.__get(endpoint, params=params)
 
-    def get_currency_exchange_rate(self, base_currency: str, quote_currency: str):
+    def get_currency_exchange_rate(self, target_currency: BaseCurrency, source_currency: BaseCurrency):
         """
         Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#get-exchange-rate
         """
         endpoint = f"/iserver/exchangerate"
-        params = {"target": quote_currency, "source": base_currency}
+        params = {"target": target_currency.value, "source": source_currency.value}
 
         return self.__get(endpoint, params=params)
 
