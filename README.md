@@ -1,7 +1,7 @@
 ### IBKR API Client
 
-This is just another Python client for the Interactive Brokers API, which is using the OAuth1.0a protocol for authentication.
-Main benefits of this client are:
+This is just another Python client for the [Interactive Brokers Client Portal REST API](https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#introduction),
+which is using the OAuth1.0a protocol for authentication. Main benefits of this client are:
  - You don't need to install Client Portal Gateway
  - Automatic authentication with live session token renewal
 
