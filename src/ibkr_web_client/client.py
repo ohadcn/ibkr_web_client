@@ -9,6 +9,7 @@ from .auth import IBKRAuthenticator
 
 from .ibkr_types import SortingOrder, Period, Alert, Exchange, OrderRule, BaseCurrency, MarketDataField
 
+from time import sleep
 
 class IBKRHttpClient:
     def __init__(self, config: IBKRConfig, logger: logging.Logger = None):
@@ -412,7 +413,94 @@ class IBKRHttpClient:
         params = {"conids": ",".join(map(str, contract_id_lst)), "fields": ",".join(map(lambda x: str(x.value), field_lst))}
 
         return self.__get(endpoint, params=params)
+    
+    def get_historical_data(self, contract_id: str, bar_size: str = "1hrs", outsideRth: bool = True, period: str = "7d", barType: str = "Last"):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#hist-md-beta
+        See also: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#hmds-period-bar-size
+        Sometimes this API call require a preflight request to get the data, done automatically by the client.
+        """
+
+        endpoint = f"/hmds/history"
+        params = {"bar": bar_size, "conid": contract_id, "period": period, "outsideRth": outsideRth, "barType": barType}
+
+        retries = 3
+
+        while retries > 0:
+            try:
+                response = self.__get(endpoint, params=params)
+                if type(response) is dict and response.get("data"):
+                    return response
+                retries -= 1
+                if retries == 0:
+                    raise ValueError("No data found in response")
+            except Exception as e:
+                self._logger.error(f"Exception occurred: {e}")
+                retries -= 1
+                if retries == 0:
+                    raise
+    
+    def get_orders(self, filters: str = None, force: bool = None):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#live-orders
+        :param filters: str = None
+            The filters to apply to the orders. This can be a comma-separated list of values.
+            The possible values are:
+            active, inactive, filled, cancelled, pending_submit, WarnState, etc
+          : https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#order-status-value
+        :param force: bool = None
+            If True, it will force a refresh of the orders. If False, it will return the cached orders.
+            If None, It will request refreshing the orders and then return the new list.
+            Default is None.
+        """
+        endpoint = f"/iserver/account/orders"
+        if force is not None:
+            params = {"force": force}
+        else:
+            self.get_orders(filters = filters, force = True)
+            sleep(1)
+            return self.get_orders(filters = filters, force = False)
+        if filters is not None:
+            params["filters"] = filters
+
+        return self.__get(endpoint, params=params)
         
+    def get_trades(self, days: int = 7, force: bool = None):
+        """
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#trades
+
+        :param days: int = 7
+            The number of days to get trades for. Default is 7.
+            The maximum value is 7.
+
+        :param force: bool = None
+            The base call require a pre-flight request to get the data
+            If None the client will run the pre-flight request, wait for a second and than the real request.
+            Default is None.
+        """
+        if force is None:
+            self.get_trades(days=days, force=True)
+            sleep(1)
+            return self.get_trades(days=days, force=False)
+
+        endpoint = f"/iserver/account/trades"
+        params = {"days": days}
+
+        return self.__get(endpoint, params=params)
+        
+    def switch_account(self, account_id: str):
+        """
+        Switch the account for the IBKR API client
+        for example: "U1234567"
+        Source: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#switch-account
+        for requests like #get_orders and #get_trades
+        """
+        self._logger.debug(f"Switching account to {account_id}")
+        endpoint = f"/iserver/account"
+        params = {"acctId": account_id}
+        response = self.__post(endpoint, json_content=params)
+        self._logger.debug(f"Response: {response}")
+        return response
 
     def __get(self, endpoint: str, json_content: dict = {}, params: dict = {}) -> dict:
         method = "GET"
